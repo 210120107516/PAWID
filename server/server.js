@@ -17,10 +17,11 @@ connectDB();
 
 const app = express();
 
+
 app.use(cors({
-  origin:'http://localhost:5173', // Allow frontend origin
+  origin: 'http://localhost:5173',  // Allow only trusted domains
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: false,
+  credentials: true
 }));
 
 // Security Middleware
@@ -47,6 +48,13 @@ app.get('/api', (req, res) => {
     
     console.log('API endpoint accessed!');
     res.json({ message: 'API is running...' });
+  });
+  app.use((req, res, next) => {
+    if (req.url.startsWith('/.')) {
+      res.status(403).send('Access denied');
+    } else {
+      next();
+    }
   });
 
 // TODO: Add API routes here in later phases (e.g., app.use('/api/auth', authRoutes);)

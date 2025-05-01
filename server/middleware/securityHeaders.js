@@ -1,12 +1,17 @@
 const helmet = require('helmet');
 
-// Basic Helmet setup - we can customize this further in Phase 7
-// Content-Security-Policy (CSP) will require careful configuration later based on specific needs.
+// Adding a Content Security Policy (CSP) to restrict allowed sources
 const setupSecurityHeaders = (app) => {
   app.use(helmet());
-  // Consider adding specific configurations later, e.g.,
-  // app.use(helmet.contentSecurityPolicy({ directives: { ... } }));
-  // app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true }));
+  app.use(helmet.frameguard({ action: 'deny' }));
+  app.use(helmet.noSniff());
+  app.use(helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://trusted-scripts.example.com"],
+      styleSrc: ["'self'", "'unsafe-inline'"]
+    }
+  }));
 };
 
 module.exports = setupSecurityHeaders;
