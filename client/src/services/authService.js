@@ -11,10 +11,6 @@ const api = axios.create({
 // Function to register a user
 const register = async (name, email, password, role) => {
     const response = await api.post('/register', { name, email, password, role });
-    // Optional: Store token immediately upon registration if backend returns it
-    // if (response.data.token) {
-    //     localStorage.setItem('authToken', response.data.token);
-    // }
     return response.data; // Contains user info and token
 };
 
@@ -42,7 +38,6 @@ const getMe = async (token) => {
 // Function to logout (client-side primarily, could call backend if needed)
 const logout = () => {
     localStorage.removeItem('authToken');
-    // Optional: Make API call to invalidate token on server-side if implemented
 };
 
 

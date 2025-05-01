@@ -49,7 +49,6 @@ const getAllReports = async () => {
 
 // Update the status of a report (requires Admin/Staff role)
 const updateReportStatus = async (reportId, statusData) => {
-    // statusData should be like { reportStatus: 'Resolved', resolutionDetails: '...' }
     const config = getAuthConfig(true);
     if (!config.headers['Authorization']) {
         throw new Error("Authentication required to update report status.");
