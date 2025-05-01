@@ -5,9 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const { PERMISSIONS, hasPermission } = require('../config/roles'); // Import roles config
 
 
-// @desc    Register a new dog
-// @route   POST /api/dogs
-// @access  Private (Requires login - Owner, ShelterStaff, Admin)
+
 const createDog = asyncHandler(async (req, res) => {
   const { name, breed, age, color, description, status, profileImageUrl } =
     req.body;
@@ -44,19 +42,12 @@ const createDog = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Get dogs registered by the logged-in user
-// @route   GET /api/dogs/mydogs
-// @access  Private
+
 const getMyDogs = asyncHandler(async (req, res) => {
-  // Find dogs where the owner field matches the logged-in user's ID
   const dogs = await Dog.find({ owner: req.user._id }).sort({ createdAt: -1 }); // Sort newest first
   res.json(dogs);
 });
 
-// @desc    Get a single dog by its ID
-// @route   GET /api/dogs/:id
-// @access  Private (for now, needs ownership check or public access logic)
-// --- getDogById (Refined Auth) ---
 const getDogById = asyncHandler(async (req, res) => {
     const dog = await Dog.findById(req.params.id).populate('owner', 'name email');
     if (!dog) { /* ... 404 error ... */ }
@@ -73,10 +64,7 @@ const getDogById = asyncHandler(async (req, res) => {
   });
   
 
-// @desc    Update a dog's profile
-// @route   PUT /api/dogs/:id
-// @access  Private (Requires ownership or Admin role)
-// --- updateDog (Refined Auth) ---
+
 const updateDog = asyncHandler(async (req, res) => {
     const dog = await Dog.findById(req.params.id);
     if (!dog) { /* ... 404 error ... */ }
@@ -98,10 +86,7 @@ const updateDog = asyncHandler(async (req, res) => {
     res.json(updatedDog);
   });
 
-// @desc    Delete a dog
-// @route   DELETE /api/dogs/:id
-// @access  Private (Requires ownership or Admin role)
-// --- deleteDog (Refined Auth) ---
+
 const deleteDog = asyncHandler(async (req, res) => {
     const dog = await Dog.findById(req.params.id);
     if (!dog) { /* ... 404 error ... */ }
@@ -122,9 +107,7 @@ const deleteDog = asyncHandler(async (req, res) => {
 
 
 
-// @desc    Get LIMITED public dog info via secure ID (for QR scan)
-// @route   GET /api/dogs/scan/:uniqueSecureId
-// @access  Public
+
 
 const getPublicDogInfoByScanId = asyncHandler(async (req, res) => {
   const { uniqueSecureId } = req.params;
@@ -154,7 +137,7 @@ const getPublicDogInfoByScanId = asyncHandler(async (req, res) => {
     color: dog.color,
     profileImageUrl: dog.profileImageUrl,
     registeredDate: dog.createdAt, // Show registration date
-    // DO NOT return owner, registeredBy, or exact location data here
+
   });
 });
 

@@ -8,8 +8,9 @@ const setupSecurityHeaders = (app) => {
   app.use(helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://trusted-scripts.example.com"],
+      scriptSrc: ["'self'", `${process.env.CLIENT_URL}`],
       styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
       imgSrc: ["'self'", "data:"],
       connectSrc: ["'self'"],
       frameAncestors: ["'none'"],

@@ -5,9 +5,7 @@ const notificationService = require("../services/notificationService");
 const { PERMISSIONS, hasPermission } = require('../config/roles');
 
 
-// @desc    Create a new report
-// @route   POST /api/reports
-// @access  Public (for 'Found'), Private (for 'Lost', 'Injured' etc. - requires ownership)
+
 const createReport = asyncHandler(async (req, res) => {
   const {
     dogId, // ID of the dog being reported
@@ -104,21 +102,14 @@ if (checkOwnership) {
   const report = await Report.create(reportData);
 
   if (report) {
-    // If notification was triggered earlier, update it with the real report ID if needed
-    // (Or trigger notification here after report is successfully created)
-    // Example: Re-triggering here
+  
     if (reportType === "Found" && dogStatusUpdated && dog.status === "Found") {
-      // Check conditions again
-      // Ensure dog was previously Lost or Pet before status change
-      // This check is slightly redundant if done correctly above, but safer
-      // const previousStatus = ... // Would need to fetch dog again or pass status
-      // if (previousStatus === 'Lost' || previousStatus === 'Pet') {
+     
       notificationService.notifyOwnerDogFound(dog._id, report); // Pass the created report
       // }
     }
 
-    // Notify admins/shelters about new reports (optional)
-    // notificationService.notify('NewReportCreated', { reportId: report._id, dogId: dog._id, type: report.reportType });
+    
 
     res.status(201).json(report);
   } else {
@@ -127,9 +118,7 @@ if (checkOwnership) {
   }
 });
 
-// @desc    Get reports for a specific dog
-// @route   GET /api/reports/dog/:dogId
-// @access  Private (Requires ownership or Admin/ShelterStaff role)
+
 const getReportsForDog = asyncHandler(async (req, res) => {
   const { dogId } = req.params;
 
@@ -179,8 +168,7 @@ const updateReportStatus = asyncHandler(async (req, res) => {
     throw new Error("Report not found");
   }
 
-  // --- Authorization already handled by route middleware ---
-  // (authorize('Admin', 'ShelterStaff'))
+
 
   const previousStatus = report.reportStatus;
   report.reportStatus = reportStatus;
@@ -190,8 +178,7 @@ const updateReportStatus = asyncHandler(async (req, res) => {
 
   const updatedReport = await report.save();
 
-  // --- Update Dog Status if Report is Resolved ---
-  // Example: If a 'Lost' report is 'Resolved', maybe set dog back to 'Pet'
+
   if (previousStatus !== "Resolved" && reportStatus === "Resolved") {
     if (report.reportType === "Lost" && report.dog?.status === "Lost") {
       // Check if there are other 'Open' Lost reports for this dog before changing status
@@ -216,21 +203,16 @@ const updateReportStatus = asyncHandler(async (req, res) => {
         );
       }
     }
-    // Add logic for resolving 'Found' reports potentially changing dog status
-    // else if (report.reportType === 'Found' && report.dog?.status === 'Found') { ... }
+    
   }
 
-  // --- Notifications ---
-  // Notify reporter or owner about status change? (Complex - requires contact info/user lookup)
-  // notificationService.notify('ReportStatusUpdate', { reportId: updatedReport._id, newStatus: updatedReport.reportStatus, dogName: report.dog?.name });
-
+  
   res.json(updatedReport);
 });
 
 const getAllReports = asyncHandler(async (req, res) => {
   // --- Authorization handled by route middleware ---
 
-  // Optional: Add filtering/pagination later (e.g., by status, type)
   const reports = await Report.find({}) // Find all reports
     .populate("dog", "name profileImageUrl") // Populate basic dog info
     .populate("reporter", "name email") // Populate reporter if available
