@@ -9,8 +9,11 @@ const setupSecurityHeaders = (app) => {
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "https://trusted-scripts.example.com"],
-      styleSrc: ["'self'", "'unsafe-inline'"]
-    }
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
+      connectSrc: ["'self'"],
+      frameAncestors: ["'none'"],
+    },
   }));
 };
 
